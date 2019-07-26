@@ -23,6 +23,7 @@ class CPU:
         self.branchtable[0b10101000] = self.bwand
         self.branchtable[0b01100101] = self.inc
         self.branchtable[0b01100110] = self.dec
+        self.branchtable[0b10100111] = self.comp
         self.branchtable[0b01000111] = self.prn
         self.branchtable[0b01000101] = self.push
         self.branchtable[0b01000110] = self.pop
@@ -52,6 +53,13 @@ class CPU:
             self.reg[reg_a] /= self.reg[reg_b]
         elif op == "AND":
             self.reg[reg_a] &= self.reg[reg_b]
+        elif op == "CMP":
+            if self.reg[reg_a] < self.reg[reg_b]:
+                self.reg[reg_a] = 0b00000100
+            elif self.reg[reg_a] > self.reg[reg_b]:
+                self.reg[reg_a] = 0b00000010
+            else:
+                self.reg[reg_a] = 0b00000001
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -105,6 +113,9 @@ class CPU:
     def dec(self, reg):
         self.alu('SUB', reg, 1)
 
+    def comp(self, reg_a, reg_b):
+        self.alu('CMP', reg_a, reg_b)
+
     def ram_read(self, mar):
         return self.ram[mar]
 
@@ -141,7 +152,8 @@ class CPU:
         })
 
         two_op = set({
-            0b10000010, 0b10100010, 0b10100000, 0b10101000, 0b10100011
+            0b10000010, 0b10100010, 0b10100000, 0b10101000, 0b10100011,
+            0b10100111
         })
 
         while True:
