@@ -29,6 +29,7 @@ class CPU:
         self.branchtable[0b01000110] = self.pop
         self.branchtable[0b01010000] = self.call
         self.branchtable[0b00010001] = self.ret
+        self.branchtable[0b01010100] = self.jmp
         self.branchtable[0b00000001] = self.hlt
 
     def load(self):
@@ -144,11 +145,14 @@ class CPU:
         value = self.ram_read(reg_b)
         self.ram_write(address, value)
 
+    def jmp(self, reg):
+        self.pc = self.ram_read(reg)
+
     def run(self):
         """Run the CPU."""
         one_op = set({
             0b01000111, 0b01000101, 0b01000110, 0b01010000, 0b01100101,
-            0b01100110
+            0b01100110, 0b01010100
         })
 
         two_op = set({
