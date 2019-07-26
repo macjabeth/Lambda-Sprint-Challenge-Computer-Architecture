@@ -29,6 +29,7 @@ class CPU:
         self.branchtable[0b10101011] = self.bwxor
         self.branchtable[0b01101001] = self.bwnot
         self.branchtable[0b10101100] = self.shl
+        self.branchtable[0b10101101] = self.shr
         self.branchtable[0b01000111] = self.prn
         self.branchtable[0b01000101] = self.push
         self.branchtable[0b01000110] = self.pop
@@ -77,6 +78,8 @@ class CPU:
             self.reg[reg_a] = (1 << 8) - 1 - self.reg[reg_a]
         elif op == "SHL":
             self.reg[reg_a] <<= self.reg[reg_b]
+        elif op == "SHR":
+            self.reg[reg_a] >>= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -145,6 +148,9 @@ class CPU:
     def shl(self, reg_a, reg_b):
         self.alu('SHL', reg_a, reg_b)
 
+    def shr(self, reg_a, reg_b):
+        self.alu('SHR', reg_a, reg_b)
+
     def ram_read(self, mar):
         return self.ram[mar]
 
@@ -193,7 +199,7 @@ class CPU:
 
         two_op = set({
             0b10000010, 0b10100010, 0b10100000, 0b10101000, 0b10100011,
-            0b10100111, 0b10101010, 0b10101011, 0b10101100
+            0b10100111, 0b10101010, 0b10101011, 0b10101100, 0b10101101
         })
 
         while True:
