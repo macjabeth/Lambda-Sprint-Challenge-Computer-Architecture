@@ -122,6 +122,9 @@ class CPU:
     def add(self, reg_a, reg_b):
         self.alu('ADD', reg_a, reg_b)
 
+    def addi(self, reg, value):
+        self.reg[reg] += value
+
     def sub(self, reg_a, reg_b):
         self.alu('SUB', reg_a, reg_b)
 
