@@ -14,6 +14,7 @@ class CPU:
         self.reg = [0] * 8
         self.sp = 0xF4
         self.pc = 0
+        self.fl = 0
 
     def setup_branchtable(self):
         self.branchtable[0b10000010] = self.ldi
@@ -56,11 +57,11 @@ class CPU:
             self.reg[reg_a] &= self.reg[reg_b]
         elif op == "CMP":
             if self.reg[reg_a] < self.reg[reg_b]:
-                self.reg[reg_a] = 0b00000100
+                self.fl = 0b00000100
             elif self.reg[reg_a] > self.reg[reg_b]:
-                self.reg[reg_a] = 0b00000010
+                self.fl = 0b00000010
             else:
-                self.reg[reg_a] = 0b00000001
+                self.fl = 0b00000001
         else:
             raise Exception("Unsupported ALU operation")
 
