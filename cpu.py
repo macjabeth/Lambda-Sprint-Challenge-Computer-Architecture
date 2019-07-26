@@ -27,6 +27,7 @@ class CPU:
         self.branchtable[0b10101000] = self.bwand
         self.branchtable[0b10101010] = self.bwor
         self.branchtable[0b10101011] = self.bwxor
+        self.branchtable[0b01101001] = self.bwnot
         self.branchtable[0b01000111] = self.prn
         self.branchtable[0b01000101] = self.push
         self.branchtable[0b01000110] = self.pop
@@ -46,7 +47,7 @@ class CPU:
             self.ram[address] = instruction
             address += 1
 
-    def alu(self, op, reg_a, reg_b):
+    def alu(self, op, reg_a, reg_b=None):
         """ALU operations."""
 
         if op == "ADD":
@@ -70,6 +71,8 @@ class CPU:
             self.reg[reg_a] |= self.reg[reg_b]
         elif op == "XOR":
             self.reg[reg_a] ^= self.reg[reg_b]
+        elif op == "NOT":
+            self.reg[reg_a] = (1 << 8) - 1 - self.reg[reg_a]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -131,6 +134,9 @@ class CPU:
 
     def bwxor(self, reg_a, reg_b):
         self.alu('XOR', reg_a, reg_b)
+
+    def bwnot(self, reg_a):
+        self.alu('NOT', reg_a)
 
     def ram_read(self, mar):
         return self.ram[mar]
