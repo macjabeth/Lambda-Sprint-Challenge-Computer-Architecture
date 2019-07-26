@@ -28,6 +28,7 @@ class CPU:
         self.branchtable[0b10101010] = self.bwor
         self.branchtable[0b10101011] = self.bwxor
         self.branchtable[0b01101001] = self.bwnot
+        self.branchtable[0b10101100] = self.shl
         self.branchtable[0b01000111] = self.prn
         self.branchtable[0b01000101] = self.push
         self.branchtable[0b01000110] = self.pop
@@ -72,7 +73,10 @@ class CPU:
         elif op == "XOR":
             self.reg[reg_a] ^= self.reg[reg_b]
         elif op == "NOT":
+            # same as `complement = 255 - input` in terms of 8b
             self.reg[reg_a] = (1 << 8) - 1 - self.reg[reg_a]
+        elif op == "SHL":
+            self.reg[reg_a] <<= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -138,6 +142,9 @@ class CPU:
     def bwnot(self, reg_a):
         self.alu('NOT', reg_a)
 
+    def shl(self, reg_a, reg_b):
+        self.alu('SHL', reg_a, reg_b)
+
     def ram_read(self, mar):
         return self.ram[mar]
 
@@ -186,7 +193,7 @@ class CPU:
 
         two_op = set({
             0b10000010, 0b10100010, 0b10100000, 0b10101000, 0b10100011,
-            0b10100111, 0b10101010, 0b10101011
+            0b10100111, 0b10101010, 0b10101011, 0b10101100
         })
 
         while True:
